@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SharpJukebox
@@ -26,10 +27,22 @@ namespace SharpJukebox
 
             return result;
         }
-
         public AudioFile[] Shuffle(AudioFile[] Files, AudioFile FirstFile)
         {
             var shuffled = Shuffle(Files);
+            int targetIndex = GetIndexOf(shuffled, FirstFile);
+            Swap(shuffled, 0, targetIndex);
+            return shuffled;
+        }
+
+        public AudioFile[] Shuffle(IEnumerable<AudioFile> Files)
+        {
+            return Shuffle(Files.ToArray());
+        }
+
+        public AudioFile[] Shuffle(IEnumerable<AudioFile> Files, AudioFile FirstFile)
+        {
+            var shuffled = Shuffle(Files.ToArray());
             int targetIndex = GetIndexOf(shuffled, FirstFile);
             Swap(shuffled, 0, targetIndex);
             return shuffled;

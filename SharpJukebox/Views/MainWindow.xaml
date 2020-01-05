@@ -1,0 +1,46 @@
+﻿<Window x:Class="SharpJukebox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uc="clr-namespace:SharpJukebox"
+        xmlns:local="clr-namespace:SharpJukebox"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+
+    <Window.Resources>
+        <RadialGradientBrush x:Key="WindowGradient" RadiusX="0.5" RadiusY="0.5" GradientOrigin="0.5,0.5">
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="#222" Offset="0"/>
+                <GradientStop Color="#111" Offset="1"/>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+    </Window.Resources>
+    
+
+    <DockPanel Background="{StaticResource WindowGradient}">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="5px">
+            <local:PreviousButton x:Name="prevButton"/>
+            <local:PlayPauseButton x:Name="playPauseButton"/>
+            <local:NextButton x:Name="nextButton"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Left" Margin="5 0 10 0">
+            <ListBox BorderBrush="{x:Null}" Name="listboxNavigation">
+                <ListBoxItem Name="lbiAll" Content="All" Selected="lbiAll_Selected"/>
+                <ListBoxItem Name="lbiArtists" Content="Artists" Selected="lbiArtists_Selected"/>
+                <ListBoxItem Name="lbiPlaylists" Content="Playlists" Selected="lbiPlaylists_Selected"/>
+                <ListBoxItem Name="lbiQueue" Content="Queue" Selected="lbiQueue_Selected"/>
+                <TextBox Name="txtSearch" Width="125" Text="Search..." Foreground="Gray" GotFocus="txtSearch_GotFocus" LostFocus="txtSearch_LostFocus" TextChanged="txtSearch_TextChanged"/>
+            </ListBox>
+        </StackPanel>
+        
+
+        <Frame Name="LibraryFrame" NavigationUIVisibility="Hidden"/>
+
+    </DockPanel>
+</Window>

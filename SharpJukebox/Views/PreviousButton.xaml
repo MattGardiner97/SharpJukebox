@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="SharpJukebox.PreviousButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SharpJukebox"
+             mc:Ignorable="d"
+             MouseDown="UserControl_MouseDown"
+             MouseUp="UserControl_MouseUp"
+             MouseLeave="UserControl_MouseLeave">
+    <Grid Width="40" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+        <Ellipse Name="borderEllipse" Fill="Transparent"/>
+
+        <Polygon Name="arrowPoly" Points="28,10 28,30 10,20" StrokeThickness="1"/>
+        <Line Name="barLine" StrokeThickness="4" X1="10" Y1="10" X2="10" Y2="30"/>
+
+    </Grid>
+</UserControl>

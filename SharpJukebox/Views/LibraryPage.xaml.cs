@@ -21,6 +21,8 @@ namespace SharpJukebox
     public partial class LibraryPage : Page
     {
         private LibraryPageDisplayType _currentDisplayState = LibraryPageDisplayType.None;
+        private IEnumerable<Playlist> _playlists; //Need this to have "Add to playlist" functionality in context menu
+
 
         public object Data { get; private set; }
 
@@ -28,7 +30,7 @@ namespace SharpJukebox
         public event Action<Playlist> PlaylistSelected;
         public event Action<string> ArtistSelected;
 
-        public LibraryPage()
+        public LibraryPage(IEnumerable<Playlist> Playlists)
         {
             InitializeComponent();
         }
@@ -96,6 +98,12 @@ namespace SharpJukebox
         private void DataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             e.Cancel = true;
+        }
+
+        private void ContextMenu_Play_Clicked(object sender, RoutedEventArgs e)
+        {
+            AudioFile selectedTrack = (AudioFile)(dgTracks.SelectedItems);
+            TrackSelected(this, selectedTrack);
         }
     }
 

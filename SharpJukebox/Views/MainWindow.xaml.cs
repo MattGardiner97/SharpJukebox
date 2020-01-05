@@ -51,7 +51,6 @@ namespace SharpJukebox
             searchLocations.AddRange(_config.SearchLocations);
             _fileLocater = new LocalTrackLocater(searchLocations.ToArray());
 
-            _searchPage = new LibraryPage();
             _metadataExtractor = new MetadataExtractor();
             _localLibraryManager = new LocalLibraryManager(_fileLocater, _metadataExtractor);
             _navigationManager = new NavigationManager();
@@ -59,6 +58,9 @@ namespace SharpJukebox
             _shuffler = new MusicShuffler();
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
             _playlistManager = new PlaylistManager(_playlistReader);
+
+            _searchPage = new LibraryPage(_playlistManager.Playlists);
+
 
 
             InitializeComponent();
@@ -195,7 +197,7 @@ namespace SharpJukebox
 
         public void ShowTracksPage(string PageHeader, ReadOnlyCollection<AudioFile> Tracks, bool ClearSearch = true)
         {
-            LibraryPage newPage = new LibraryPage();
+            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
             newPage.SetPageHeader(PageHeader);
             newPage.SetDataGridItems(Tracks);
             newPage.TrackSelected += LibraryPage_TrackSelected;
@@ -206,7 +208,7 @@ namespace SharpJukebox
 
         private void ShowPlaylistPage()
         {
-            LibraryPage newPage = new LibraryPage();
+            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
             newPage.SetPageHeader("Playlists");
             newPage.SetDataGridItems(_playlistManager.Playlists);
             newPage.PlaylistSelected += Librarypage_PlaylistSelected;
@@ -218,7 +220,7 @@ namespace SharpJukebox
         {
             string[] artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct().ToArray();
 
-            LibraryPage newPage = new LibraryPage();
+            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
             newPage.SetPageHeader("Artists");
             newPage.SetDataGridItems(artists);
             newPage.ArtistSelected += LibraryPage_ArtistSelected;

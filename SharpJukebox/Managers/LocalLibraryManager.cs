@@ -51,5 +51,11 @@ namespace SharpJukebox
             var result = Tracks.Where(file => file.Artist == ArtistName);
             return new ReadOnlyCollection<AudioFile>(result.ToList());
         }
+
+        public IEnumerable<AudioFile> FindByAlbum(string Artist, string Album)
+        {
+            var result = Tracks.Where(file => file.Artist == Artist && file.Album == Album);
+            return result;
+        }
     }
 }

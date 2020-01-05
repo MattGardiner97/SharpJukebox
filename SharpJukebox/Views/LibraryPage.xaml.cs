@@ -42,10 +42,12 @@ namespace SharpJukebox
 
         public void SetDataGridItems(IEnumerable<AudioFile> Tracks)
         {
-            this.Data = Tracks;
-            dgTracks.DataContext = Data;
-            ShowDataGrid(dgTracks);
-            _currentDisplayState = LibraryPageDisplayType.Tracks;
+            throw new Exception();
+
+            //this.Data = Tracks;
+            //dgTracks.DataContext = Data;
+            //ShowDataGrid(dgTracks);
+            //_currentDisplayState = LibraryPageDisplayType.Tracks;
         }
 
         public void SetDataGridItems(IEnumerable<Playlist> Playlists)
@@ -71,11 +73,13 @@ namespace SharpJukebox
 
         private void ShowDataGrid(DataGrid SelectedGrid)
         {
-            dgTracks.Visibility = Visibility.Collapsed;
-            dgPlaylists.Visibility = Visibility.Collapsed;
-            dgArtists.Visibility = Visibility.Collapsed;
+            throw new Exception();
 
-            SelectedGrid.Visibility = Visibility.Visible;
+            //dgTracks.Visibility = Visibility.Collapsed;
+            //dgPlaylists.Visibility = Visibility.Collapsed;
+            //dgArtists.Visibility = Visibility.Collapsed;
+
+            //SelectedGrid.Visibility = Visibility.Visible;
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -102,8 +106,10 @@ namespace SharpJukebox
 
         private void ContextMenu_Play_Clicked(object sender, RoutedEventArgs e)
         {
-            AudioFile selectedTrack = (AudioFile)(dgTracks.SelectedItems);
-            TrackSelected(this, selectedTrack);
+            throw new Exception();
+
+            //AudioFile selectedTrack = (AudioFile)(dgTracks.SelectedItems);
+            //TrackSelected(this, selectedTrack);
         }
     }
 

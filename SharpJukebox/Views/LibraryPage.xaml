@@ -45,30 +45,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <DataGrid
-            Name="dgTracks"
-            BeginningEdit="DataGrid_BeginningEdit">
-
-            <DataGrid.Resources>
-                <ContextMenu x:Key="DataGridRowContextMenu">
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play" Click="ContextMenu_Play_Clicked"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add track to playlist..."/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add artist to playlist..."/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add album to playlist..."/>
-                </ContextMenu>
-                
-                <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
-                    <Setter Property="ContextMenu" Value="{StaticResource DataGridRowContextMenu}"/>
-                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
-                </Style>
-            </DataGrid.Resources>
-
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Title" IsReadOnly="True" Binding="{Binding Title}" Width="4*"/>
-                <DataGridTextColumn Header="Artist" IsReadOnly="True" Binding="{Binding Artist}" Width="2.5*"/>
-                <DataGridTextColumn Header="Album" IsReadOnly="True" Binding="{Binding Album}" Width="2.5*"/>
-                <DataGridTextColumn Header="Duration" IsReadOnly="True" Binding="{Binding DurationString}" Width="1.25*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        
     </DockPanel>
 </Page>

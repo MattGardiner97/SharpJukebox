@@ -72,7 +72,6 @@
             <Setter Property="SelectionUnit" Value="FullRow"/>
             <Setter Property="RowHeaderWidth" Value="0"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="Visibility" Value="Collapsed"/>
         </Style>
         <Style TargetType="Label" BasedOn="{StaticResource DefaultTextStyle}"/>
         <Style x:Key="DataGridRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource HoverableTextStyle}"/>

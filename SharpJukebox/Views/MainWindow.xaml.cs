@@ -78,7 +78,7 @@ namespace SharpJukebox
             _playlistManager.Load();
 
             //Set event handlers
-            _searchPage.TrackSelected += LibraryPage_TrackSelected;
+            //_searchPage.TrackSelected += LibraryPage_TrackSelected;
             playPauseButton.Pressed += playPauseButton_Clicked;
 
             //Display initial page
@@ -170,15 +170,31 @@ namespace SharpJukebox
             ShowTracksPage("All", _localLibraryManager.Tracks);
         }
 
-        private void LibraryPage_TrackSelected(LibraryPage Sender, object SelectedItem)
+        private void LibraryPage_TrackSelected(IEnumerable<AudioFile> Selected, IEnumerable<AudioFile> AllTracks)
         {
-            var tracks = ((ReadOnlyCollection<AudioFile>)Sender.Data).ToArray();
-            //var tracks = Sender.Tracks.ToArray();
-            if (_musicPlayer.Shuffle == true)
-                tracks = _shuffler.Shuffle(tracks, (AudioFile)SelectedItem);
+            IEnumerable<AudioFile> tracksToPlay = null;
+            if(_musicPlayer.Shuffle == true)
+            {
+                if(Selected.Count() > 1)
+                {
+                    tracksToPlay = _shuffler.Shuffle(Selected);
+                }
+                else
+                {
+                    tracksToPlay = _shuffler.Shuffle(AllTracks,Selected.First());
+                }
+            }
+            else
+            {
+
+                var result = new List<AudioFile>(AllTracks);
+                result.Remove(Selected.First());
+                result.Insert(0, Selected.First());
+                tracksToPlay = result;
+            }
 
             _musicPlayer.ClearQueue();
-            _musicPlayer.AddToQueue(tracks);
+            _musicPlayer.AddToQueue(tracksToPlay);
             _musicPlayer.Play();
             playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
         }
@@ -197,10 +213,10 @@ namespace SharpJukebox
 
         public void ShowTracksPage(string PageHeader, ReadOnlyCollection<AudioFile> Tracks, bool ClearSearch = true)
         {
-            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
+            TrackPage newPage = new TrackPage();
             newPage.SetPageHeader(PageHeader);
-            newPage.SetDataGridItems(Tracks);
-            newPage.TrackSelected += LibraryPage_TrackSelected;
+            newPage.SetDataContext(Tracks);
+            newPage.TracksSelected += LibraryPage_TrackSelected;
             LibraryFrame.Content = newPage;
             if (ClearSearch == true)
                 txtSearch.Clear();

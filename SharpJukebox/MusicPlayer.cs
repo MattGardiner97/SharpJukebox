@@ -122,7 +122,7 @@ namespace SharpJukebox
             _queue.Add(File);
         }
 
-        public void AddToQueue(AudioFile[] Files)
+        public void AddToQueue(IEnumerable<AudioFile> Files)
         {
             _queue.AddRange(Files);
         }

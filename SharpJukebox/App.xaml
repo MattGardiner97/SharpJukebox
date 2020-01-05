@@ -12,6 +12,7 @@
         <SolidColorBrush x:Key="DimWhiteColor">#ccc</SolidColorBrush>
         <SolidColorBrush x:Key="DarkWhiteColor">#999</SolidColorBrush>
         <SolidColorBrush x:Key="HoverBackgroundColor">#444</SolidColorBrush>
+        <SolidColorBrush x:Key="BasisBackgroundDark">#222</SolidColorBrush>
 
         <Style x:Key="BaseStyle" TargetType="Control" >
             <Setter Property="Background" Value="Transparent"/>

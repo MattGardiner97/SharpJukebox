@@ -18,10 +18,10 @@
 
             <DataGrid.Resources>
                 <ContextMenu x:Key="DataGridRowContextMenu">
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add track to playlist..."/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add artist to playlist..."/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add album to playlist..."/>
+                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play" Click="MenuItemPlay_Clicked"/>
+                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Artist" Click="MenuItemArist_Clicked"/>
+                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Album" Click="MenuItemAlbum_Clicked"/>
+                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add To Playlist" Click="MenuItemAddPlaylist_Clicked"/>
                 </ContextMenu>
 
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">

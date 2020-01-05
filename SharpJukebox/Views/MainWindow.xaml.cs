@@ -32,7 +32,7 @@ namespace SharpJukebox
         private NavigationManager _navigationManager;
         private MusicPlayer _musicPlayer;
         private MusicShuffler _shuffler;
-        private LibraryPage _searchPage;
+        private TrackPage _searchPage;
 
         //Holds the current page before beginning a search
         private Page _previousPage;
@@ -59,13 +59,14 @@ namespace SharpJukebox
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
             _playlistManager = new PlaylistManager(_playlistReader);
 
-            _searchPage = new LibraryPage(_playlistManager.Playlists);
-
-
+            _searchPage = new TrackPage();
 
             InitializeComponent();
         }
 
+        /////////////////////////
+        //Window Event Handlers//
+        /////////////////////////
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //Initialise audio devices
@@ -78,7 +79,7 @@ namespace SharpJukebox
             _playlistManager.Load();
 
             //Set event handlers
-            //_searchPage.TrackSelected += LibraryPage_TrackSelected;
+            _searchPage.TracksSelected += TrackPage_TracksSelected;
             playPauseButton.Pressed += playPauseButton_Clicked;
 
             //Display initial page
@@ -94,6 +95,9 @@ namespace SharpJukebox
             _audioDevice = null;
         }
 
+        /////////////////////////////////
+        //Player Control Event Handlers//
+        /////////////////////////////////
         private void playPauseButton_Clicked()
         {
             if (_musicPlayer.PlayState == PlayState.Playing)
@@ -105,37 +109,40 @@ namespace SharpJukebox
             {
                 _musicPlayer.Resume();
                 playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
-
             }
         }
 
-        private void txtSearch_GotFocus(object sender, RoutedEventArgs e)
-        {
-            listboxNavigation.SelectedItem = null;
+        //private void LibraryPage_ArtistSelected(string Artist)
+        //{
+        //    string artistName = Artist;
+        //    ShowTracksPage(artistName, _localLibraryManager.FindByArtist(artistName));
+        //}
 
-            UpdateSearchBoxPlaceholder();
+        //////////////////////////
+        //Sidebar Event Handlers//
+        //////////////////////////
+        private void lbiAll_Selected(object sender, RoutedEventArgs e)
+        {
+            ShowTracksPage("All", _localLibraryManager.Tracks);
         }
 
-        private void txtSearch_LostFocus(object sender, RoutedEventArgs e)
+        private void lbiQueue_Selected(object sender, RoutedEventArgs e)
         {
-            UpdateSearchBoxPlaceholder();
+            var queue = _musicPlayer.Queue;
+            ShowTracksPage("Queue", queue);
         }
 
-        private void UpdateSearchBoxPlaceholder()
+        private void lbiPlaylists_Selected(object sender, RoutedEventArgs e)
         {
-            if (txtSearch.Text == SEARCH_PLACEHOLDER && txtSearch.IsFocused == true)
-            {
-                txtSearch.Foreground = Brushes.Black;
-                txtSearch.Text = "";
-            }
-            if (string.IsNullOrEmpty(txtSearch.Text) && txtSearch.IsFocused == false)
-            {
-                txtSearch.Foreground = Brushes.Gray;
-                txtSearch.Text = SEARCH_PLACEHOLDER;
-            }
+            ShowPlaylistPage();
         }
 
-        private void txtSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void lbiArtists_Selected(object sender, RoutedEventArgs e)
+        {
+            ShowArtistPage();
+        }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSearchBoxPlaceholder();
 
@@ -158,35 +165,39 @@ namespace SharpJukebox
                     _previousPage = (Page)LibraryFrame.Content;
 
                 var searchResults = _localLibraryManager.Search(query);
-                _searchPage.SetDataGridItems(searchResults);
+                _searchPage.SetDataContext(searchResults);
                 _searchPage.SetPageHeader($"Search results for '{query}'");
                 if (LibraryFrame.Content != _searchPage)
                     LibraryFrame.Content = _searchPage;
             }
         }
 
-        private void lbiAll_Selected(object sender, RoutedEventArgs e)
+        private void txtSearch_GotFocus(object sender, RoutedEventArgs e)
         {
-            ShowTracksPage("All", _localLibraryManager.Tracks);
+            listboxNavigation.SelectedItem = null;
+            UpdateSearchBoxPlaceholder();
         }
 
-        private void LibraryPage_TrackSelected(IEnumerable<AudioFile> Selected, IEnumerable<AudioFile> AllTracks)
+        private void txtSearch_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSearchBoxPlaceholder();
+        }
+
+        /////////////////////////////
+        //Track Page Event Handlers//
+        /////////////////////////////
+        private void TrackPage_TracksSelected(IEnumerable<AudioFile> Selected, IEnumerable<AudioFile> AllTracks)
         {
             IEnumerable<AudioFile> tracksToPlay = null;
-            if(_musicPlayer.Shuffle == true)
+            if (_musicPlayer.Shuffle == true)
             {
-                if(Selected.Count() > 1)
-                {
+                if (Selected.Count() > 1)
                     tracksToPlay = _shuffler.Shuffle(Selected);
-                }
                 else
-                {
-                    tracksToPlay = _shuffler.Shuffle(AllTracks,Selected.First());
-                }
+                    tracksToPlay = _shuffler.Shuffle(AllTracks, Selected.First());
             }
             else
             {
-
                 var result = new List<AudioFile>(AllTracks);
                 result.Remove(Selected.First());
                 result.Insert(0, Selected.First());
@@ -199,24 +210,46 @@ namespace SharpJukebox
             playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
         }
 
-        private void Librarypage_PlaylistSelected(Playlist Playlist)
+        private void TrackPage_ArtistSelected(string Artist)
         {
-            Playlist selectedPlaylist = Playlist;
-            ShowTracksPage(selectedPlaylist.Name, selectedPlaylist.Tracks);
+            var artistTracks = _localLibraryManager.FindByArtist(Artist);
+            ShowTracksPage(Artist, artistTracks);
         }
 
-        private void LibraryPage_ArtistSelected(string Artist)
+        private void TrackPage_AlbumSelected(string Artist, string Album)
         {
-            string artistName = Artist;
-            ShowTracksPage(artistName, _localLibraryManager.FindByArtist(artistName));
+            var albumTracks = _localLibraryManager.FindByAlbum(Artist, Album);
+            ShowTracksPage(Album, albumTracks);
         }
 
-        public void ShowTracksPage(string PageHeader, ReadOnlyCollection<AudioFile> Tracks, bool ClearSearch = true)
+        private void TrackPage_AddPlaylistSelected(IEnumerable<AudioFile> Tracks)
         {
-            TrackPage newPage = new TrackPage();
-            newPage.SetPageHeader(PageHeader);
-            newPage.SetDataContext(Tracks);
-            newPage.TracksSelected += LibraryPage_TrackSelected;
+            SelectPlaylistDialog spd = new SelectPlaylistDialog(_playlistManager.Playlists);
+            spd.Owner = this;
+            spd.ShowDialog();
+            Playlist selected = spd.SelectedPlaylist;
+            ;
+        }
+
+        ////////////////////////////////
+        //Playlist Page Event Handlers//
+        ////////////////////////////////
+        private void PlaylistPage_PlaylistSelected(Playlist Playlist)
+        {
+            ShowTracksPage(Playlist.Name, Playlist.Tracks);
+        }
+
+
+        //////////////////
+        //User Functions//
+        //////////////////
+        public void ShowTracksPage(string PageHeader, IEnumerable<AudioFile> Tracks, bool ClearSearch = true)
+        {
+            TrackPage newPage = new TrackPage(PageHeader, Tracks);
+            newPage.TracksSelected += TrackPage_TracksSelected;
+            newPage.ArtistSelected += TrackPage_ArtistSelected;
+            newPage.AlbumSelected += TrackPage_AlbumSelected;
+            newPage.AddToPlaylistSelected += TrackPage_AddPlaylistSelected;
             LibraryFrame.Content = newPage;
             if (ClearSearch == true)
                 txtSearch.Clear();
@@ -224,40 +257,37 @@ namespace SharpJukebox
 
         private void ShowPlaylistPage()
         {
-            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
-            newPage.SetPageHeader("Playlists");
-            newPage.SetDataGridItems(_playlistManager.Playlists);
-            newPage.PlaylistSelected += Librarypage_PlaylistSelected;
+            PlaylistPage newPage = new PlaylistPage("Playlists", _playlistManager.Playlists);
+            newPage.PlaylistSelected += PlaylistPage_PlaylistSelected;
             LibraryFrame.Content = newPage;
             txtSearch.Clear();
         }
 
         private void ShowArtistPage()
         {
-            string[] artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct().ToArray();
+            throw new Exception();
 
-            LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
-            newPage.SetPageHeader("Artists");
-            newPage.SetDataGridItems(artists);
-            newPage.ArtistSelected += LibraryPage_ArtistSelected;
-            LibraryFrame.Content = newPage;
-            txtSearch.Clear();
+            //string[] artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct().ToArray();
+
+            //LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
+            //newPage.SetPageHeader("Artists");
+            //newPage.SetDataGridItems(artists);
+            //newPage.ArtistSelected += LibraryPage_ArtistSelected;
+            //LibraryFrame.Content = newPage;
+            //txtSearch.Clear();
         }
-
-        private void lbiQueue_Selected(object sender, RoutedEventArgs e)
+        private void UpdateSearchBoxPlaceholder()
         {
-            var queue = _musicPlayer.Queue;
-            ShowTracksPage("Queue", queue);
-        }
-
-        private void lbiPlaylists_Selected(object sender, RoutedEventArgs e)
-        {
-            ShowPlaylistPage();
-        }
-
-        private void lbiArtists_Selected(object sender, RoutedEventArgs e)
-        {
-            ShowArtistPage();
+            if (txtSearch.Text == SEARCH_PLACEHOLDER && txtSearch.IsFocused == true)
+            {
+                txtSearch.Foreground = Brushes.Black;
+                txtSearch.Text = "";
+            }
+            if (string.IsNullOrEmpty(txtSearch.Text) && txtSearch.IsFocused == false)
+            {
+                txtSearch.Foreground = Brushes.Gray;
+                txtSearch.Text = SEARCH_PLACEHOLDER;
+            }
         }
     }
 }

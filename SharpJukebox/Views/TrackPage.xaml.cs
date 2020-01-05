@@ -24,10 +24,21 @@ namespace SharpJukebox
         //Arg1: Selected tracks
         //Arg2: All Tracks
         public event Action<IEnumerable<AudioFile>, IEnumerable<AudioFile>> TracksSelected;
+        public event Action<string> ArtistSelected;
+        public event Action<string, string> AlbumSelected; //Arg1: Artist, Arg2: Album
+        public event Action<IEnumerable<AudioFile>> AddToPlaylistSelected;
 
         public TrackPage()
         {
             InitializeComponent();
+        }
+
+        public TrackPage(string Header, IEnumerable<AudioFile> Tracks)
+        {
+            InitializeComponent();
+
+            SetPageHeader(Header);
+            SetDataContext(Tracks);
         }
         
         public void SetDataContext(IEnumerable<AudioFile> Tracks)
@@ -51,6 +62,30 @@ namespace SharpJukebox
             AudioFile[] selected = new AudioFile[dgTracks.SelectedItems.Count];
             dgTracks.SelectedItems.CopyTo(selected,0);
             TracksSelected(selected, _tracks);
+        }
+
+        private void MenuItemPlay_Clicked(object sender, RoutedEventArgs e)
+        {
+            IEnumerable<AudioFile> selected = dgTracks.SelectedItems.Cast<AudioFile>();
+            TracksSelected(selected, _tracks);
+        }
+
+        private void MenuItemArist_Clicked(object sender, RoutedEventArgs e)
+        {
+            AudioFile firstSelected = (AudioFile)dgTracks.SelectedItems[0];
+            ArtistSelected(firstSelected.Artist);
+        }
+
+        private void MenuItemAlbum_Clicked(object sender, RoutedEventArgs e)
+        {
+            AudioFile firstSelected = (AudioFile)dgTracks.SelectedItems[0];
+            AlbumSelected(firstSelected.Artist, firstSelected.Album);
+        }
+
+        private void MenuItemAddPlaylist_Clicked(object sender, RoutedEventArgs e)
+        {
+            IEnumerable<AudioFile> tracks = dgTracks.SelectedItems.Cast<AudioFile>();
+            AddToPlaylistSelected(tracks);
         }
     }
 }

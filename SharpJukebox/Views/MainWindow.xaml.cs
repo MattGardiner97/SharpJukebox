@@ -26,6 +26,7 @@ namespace SharpJukebox
         private AudioDeviceLocater _audioDeviceLocater;
         private ITrackLocater _fileLocater;
         private IPlaylistReader _playlistReader;
+        private IPlaylistWriter _playlistWriter;
         private MetadataExtractor _metadataExtractor;
         private LocalLibraryManager _localLibraryManager;
         private PlaylistManager _playlistManager;
@@ -57,7 +58,8 @@ namespace SharpJukebox
             _musicPlayer = new MusicPlayer();
             _shuffler = new MusicShuffler();
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
-            _playlistManager = new PlaylistManager(_playlistReader);
+            _playlistWriter = new LocalPlaylistWriter(System.IO.Path.Join(AppContext.BaseDirectory,"Playlists"));
+            _playlistManager = new PlaylistManager(_playlistReader,_playlistWriter);
 
             _searchPage = new TrackPage();
 
@@ -228,7 +230,17 @@ namespace SharpJukebox
             spd.Owner = this;
             spd.ShowDialog();
             Playlist selected = spd.SelectedPlaylist;
-            ;
+            if (selected == null)
+                return;
+
+            selected.AddTracks(Tracks);
+            _playlistManager.SavePlaylist(selected);
+        }
+
+        private void Trackpage_PlaylistUpdated(Playlist UpdatedPlaylist)
+        {
+            _playlistManager.SavePlaylist(UpdatedPlaylist);
+            ShowTracksPage(UpdatedPlaylist.Name, UpdatedPlaylist.Tracks, true, UpdatedPlaylist);
         }
 
         ////////////////////////////////
@@ -236,20 +248,23 @@ namespace SharpJukebox
         ////////////////////////////////
         private void PlaylistPage_PlaylistSelected(Playlist Playlist)
         {
-            ShowTracksPage(Playlist.Name, Playlist.Tracks);
+            ShowTracksPage(Playlist.Name, Playlist.Tracks, true,Playlist);
         }
 
 
         //////////////////
         //User Functions//
         //////////////////
-        public void ShowTracksPage(string PageHeader, IEnumerable<AudioFile> Tracks, bool ClearSearch = true)
+        public void ShowTracksPage(string PageHeader, IEnumerable<AudioFile> Tracks, bool ClearSearch = true, Playlist PlaylistContext = null)
         {
             TrackPage newPage = new TrackPage(PageHeader, Tracks);
+            newPage.PlaylistContext = PlaylistContext;
             newPage.TracksSelected += TrackPage_TracksSelected;
             newPage.ArtistSelected += TrackPage_ArtistSelected;
             newPage.AlbumSelected += TrackPage_AlbumSelected;
             newPage.AddToPlaylistSelected += TrackPage_AddPlaylistSelected;
+            newPage.PlaylistUpdated += Trackpage_PlaylistUpdated;
+
             LibraryFrame.Content = newPage;
             if (ClearSearch == true)
                 txtSearch.Clear();

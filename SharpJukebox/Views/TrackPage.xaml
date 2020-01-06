@@ -8,21 +8,28 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TrackPage">
 
+    <Page.Resources>
+        <ContextMenu x:Key="DataGridRowContextMenu" Name="DataGridRowContextMenu">
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play" Click="MenuItemPlay_Clicked"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Artist" Click="MenuItemArist_Clicked"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Album" Click="MenuItemAlbum_Clicked"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add To Playlist" Click="MenuItemAddPlaylist_Clicked"/>
+        </ContextMenu>
+
+        <MenuItem x:Key="itemRemovePlaylist" Template="{StaticResource ContextMenuTemplate}" Header="Remove From Playlist" Click="RemovePlaylistMenuItem_Clicked"/>
+
+    </Page.Resources>
+    
     <DockPanel>
         <Label Name="lblHeader" Grid.Row="0" FontSize="30px" DockPanel.Dock="Top" Style="{StaticResource HeaderTextStyle}"/>
 
-
         <DataGrid
             Name="dgTracks"
-            BeginningEdit="dgTracks_BeginningEdit">
+            BeginningEdit="dgTracks_BeginningEdit"
+            ContextMenuOpening="ContextMenu_ContextMenuOpening">
 
             <DataGrid.Resources>
-                <ContextMenu x:Key="DataGridRowContextMenu">
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play" Click="MenuItemPlay_Clicked"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Artist" Click="MenuItemArist_Clicked"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Go To Album" Click="MenuItemAlbum_Clicked"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Add To Playlist" Click="MenuItemAddPlaylist_Clicked"/>
-                </ContextMenu>
+                
 
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
                     <Setter Property="ContextMenu" Value="{StaticResource DataGridRowContextMenu}"/>

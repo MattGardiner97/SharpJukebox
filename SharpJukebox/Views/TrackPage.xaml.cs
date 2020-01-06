@@ -27,6 +27,9 @@ namespace SharpJukebox
         public event Action<string> ArtistSelected;
         public event Action<string, string> AlbumSelected; //Arg1: Artist, Arg2: Album
         public event Action<IEnumerable<AudioFile>> AddToPlaylistSelected;
+        public event Action<Playlist> PlaylistUpdated;
+
+        public Playlist PlaylistContext { get; set; }
 
         public TrackPage()
         {
@@ -40,7 +43,7 @@ namespace SharpJukebox
             SetPageHeader(Header);
             SetDataContext(Tracks);
         }
-        
+
         public void SetDataContext(IEnumerable<AudioFile> Tracks)
         {
             _tracks = Tracks;
@@ -60,7 +63,7 @@ namespace SharpJukebox
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             AudioFile[] selected = new AudioFile[dgTracks.SelectedItems.Count];
-            dgTracks.SelectedItems.CopyTo(selected,0);
+            dgTracks.SelectedItems.CopyTo(selected, 0);
             TracksSelected(selected, _tracks);
         }
 
@@ -86,6 +89,29 @@ namespace SharpJukebox
         {
             IEnumerable<AudioFile> tracks = dgTracks.SelectedItems.Cast<AudioFile>();
             AddToPlaylistSelected(tracks);
+        }
+
+        private void ContextMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            ContextMenu dgContextMenu = (ContextMenu)Resources["DataGridRowContextMenu"];
+            MenuItem removeMenuItem = (MenuItem)Resources["itemRemovePlaylist"];
+            if (PlaylistContext != null && dgContextMenu.Items.Contains(removeMenuItem) == false)
+                dgContextMenu.Items.Add(removeMenuItem);
+
+            if (PlaylistContext == null && dgContextMenu.Items.Contains(removeMenuItem) == true)
+                dgContextMenu.Items.Remove(removeMenuItem);
+        }
+
+        private void RemovePlaylistMenuItem_Clicked(object sender, RoutedEventArgs e)
+        {
+            //This shouldn't occur
+            if (PlaylistContext == null)
+                return;
+
+            IEnumerable<AudioFile> tracks = dgTracks.SelectedItems.Cast<AudioFile>();
+            PlaylistContext.RemoveTracks(tracks);
+
+            PlaylistUpdated(PlaylistContext);
         }
     }
 }

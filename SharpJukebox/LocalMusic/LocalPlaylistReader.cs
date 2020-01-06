@@ -49,7 +49,7 @@ namespace SharpJukebox
             foreach (string trackFilename in trackFilenames)
             {
                 AudioFile track = _localLibraryManager.FindByFilename(trackFilename);
-                newPlaylist.AddTrack(track);
+                newPlaylist.AddTracks(track);
             }
 
             return newPlaylist;

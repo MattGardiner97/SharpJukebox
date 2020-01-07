@@ -34,7 +34,7 @@
             <Label Name="lblSidebarArtists"  Content="Artists" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarArtists_MouseUp"/>
             <Label Name="lblSidebarPlaylists" Content="Playlists" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarPlaylists_MouseUp"/>
             <Label Name="lblSidebarQueue" Content="Queue" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarQueue_MouseUp"/>
-            <TextBox Name="txtSearch" Width="125" Text="Search..." Foreground="Gray" GotFocus="txtSearch_GotFocus" LostFocus="txtSearch_LostFocus" TextChanged="txtSearch_TextChanged" FontSize="{StaticResource WindowDefaultFontSize}"/>
+            <local:PlaceholderTextbox Placeholder="Search..." x:Name="txtSearch" MinWidth="125" TextChanged="txtSearch_TextChanged"/>
         </StackPanel>
         
 

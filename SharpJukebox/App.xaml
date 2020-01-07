@@ -38,6 +38,23 @@
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
+        <!--Sidebar-->
+        <Style x:Key="SidebarLabelStyle" TargetType="Label" BasedOn="{StaticResource DefaultTextStyle}">
+            <Setter Property="Foreground" Value="{StaticResource DimWhiteColor}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="{StaticResource HoverBackgroundColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SidebarLabelSelectedStyle" TargetType="Label" BasedOn="{StaticResource SidebarLabelStyle}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <!--Sidebar-->
+        
         <!--Context Menu-->
         <Style TargetType="ContextMenu">
             <Setter Property="BorderBrush" Value="{x:Null}"/>

@@ -29,14 +29,12 @@
             <local:NextButton x:Name="nextButton"/>
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Left" Margin="5 0 10 0">
-            <ListBox BorderBrush="{x:Null}" Name="listboxNavigation">
-                <ListBoxItem Name="lbiAll" Content="All" Selected="lbiAll_Selected"/>
-                <ListBoxItem Name="lbiArtists" Content="Artists" Selected="lbiArtists_Selected"/>
-                <ListBoxItem Name="lbiPlaylists" Content="Playlists" Selected="lbiPlaylists_Selected"/>
-                <ListBoxItem Name="lbiQueue" Content="Queue" Selected="lbiQueue_Selected"/>
-                <TextBox Name="txtSearch" Width="125" Text="Search..." Foreground="Gray" GotFocus="txtSearch_GotFocus" LostFocus="txtSearch_LostFocus" TextChanged="txtSearch_TextChanged"/>
-            </ListBox>
+        <StackPanel DockPanel.Dock="Left" Margin="5 5 10 5">
+            <Label Name="lblSidebarAll" Content="All" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarAll_MouseUp"/>
+            <Label Name="lblSidebarArtists"  Content="Artists" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarArtists_MouseUp"/>
+            <Label Name="lblSidebarPlaylists" Content="Playlists" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarPlaylists_MouseUp"/>
+            <Label Name="lblSidebarQueue" Content="Queue" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarQueue_MouseUp"/>
+            <TextBox Name="txtSearch" Width="125" Text="Search..." Foreground="Gray" GotFocus="txtSearch_GotFocus" LostFocus="txtSearch_LostFocus" TextChanged="txtSearch_TextChanged" FontSize="{StaticResource WindowDefaultFontSize}"/>
         </StackPanel>
         
 

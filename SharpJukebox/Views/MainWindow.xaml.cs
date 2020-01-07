@@ -35,6 +35,8 @@ namespace SharpJukebox
         private MusicShuffler _shuffler;
         private TrackPage _searchPage;
 
+        private Style _sidebarSelectedStyle;
+
         //Holds the current page before beginning a search
         private Page _previousPage;
 
@@ -63,6 +65,8 @@ namespace SharpJukebox
 
             _searchPage = new TrackPage();
 
+            _sidebarSelectedStyle = (Style)Application.Current.Resources["SidebarLabelSelectedStyle"];
+
             InitializeComponent();
         }
 
@@ -86,8 +90,6 @@ namespace SharpJukebox
 
             //Display initial page
             ShowTracksPage("All", _localLibraryManager.Tracks);
-            lbiAll.IsSelected = true;
-            lbiAll.Focus();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -123,25 +125,30 @@ namespace SharpJukebox
         //////////////////////////
         //Sidebar Event Handlers//
         //////////////////////////
-        private void lbiAll_Selected(object sender, RoutedEventArgs e)
+        private void lblSidebarAll_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ShowTracksPage("All", _localLibraryManager.Tracks);
+            lblSidebarAll.Style = _sidebarSelectedStyle;
         }
 
-        private void lbiQueue_Selected(object sender, RoutedEventArgs e)
+        private void lblSidebarQueue_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
         {
             var queue = _musicPlayer.Queue;
             ShowTracksPage("Queue", queue);
+            lblSidebarQueue.Style = _sidebarSelectedStyle;
         }
 
-        private void lbiPlaylists_Selected(object sender, RoutedEventArgs e)
+        private void lblSidebarPlaylists_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ShowPlaylistPage();
+            lblSidebarPlaylists.Style = _sidebarSelectedStyle;
         }
 
-        private void lbiArtists_Selected(object sender, RoutedEventArgs e)
+        private void lblSidebarArtists_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ShowArtistPage();
+            lblSidebarArtists.Style = _sidebarSelectedStyle;
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -176,7 +183,7 @@ namespace SharpJukebox
 
         private void txtSearch_GotFocus(object sender, RoutedEventArgs e)
         {
-            listboxNavigation.SelectedItem = null;
+            //listboxNavigation.SelectedItem = null;
             UpdateSearchBoxPlaceholder();
         }
 
@@ -257,6 +264,8 @@ namespace SharpJukebox
         //////////////////
         public void ShowTracksPage(string PageHeader, IEnumerable<AudioFile> Tracks, bool ClearSearch = true, Playlist PlaylistContext = null)
         {
+            ClearSidebarSelection();
+
             TrackPage newPage = new TrackPage(PageHeader, Tracks);
             newPage.PlaylistContext = PlaylistContext;
             newPage.TracksSelected += TrackPage_TracksSelected;
@@ -272,6 +281,7 @@ namespace SharpJukebox
 
         private void ShowPlaylistPage()
         {
+            ClearSidebarSelection();
             PlaylistPage newPage = new PlaylistPage("Playlists", _playlistManager.Playlists);
             newPage.PlaylistSelected += PlaylistPage_PlaylistSelected;
             LibraryFrame.Content = newPage;
@@ -280,6 +290,8 @@ namespace SharpJukebox
 
         private void ShowArtistPage()
         {
+            ClearSidebarSelection();
+
             throw new Exception();
 
             //string[] artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct().ToArray();
@@ -303,6 +315,16 @@ namespace SharpJukebox
                 txtSearch.Foreground = Brushes.Gray;
                 txtSearch.Text = SEARCH_PLACEHOLDER;
             }
+        }
+
+       private void ClearSidebarSelection()
+        {
+            var defaultStyle = (Style)Application.Current.Resources["SidebarLabelStyle"];
+
+            lblSidebarAll.Style = defaultStyle;
+            lblSidebarArtists.Style = defaultStyle;
+            lblSidebarPlaylists.Style = defaultStyle;
+            lblSidebarQueue.Style = defaultStyle;
         }
     }
 }

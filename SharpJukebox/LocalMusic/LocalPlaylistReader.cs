@@ -26,6 +26,8 @@ namespace SharpJukebox
 
         public void Load()
         {
+            _playlists.Clear();
+
             if (Directory.Exists(_searchLocation) == false)
                 return;
 

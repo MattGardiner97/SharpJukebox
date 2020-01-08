@@ -18,29 +18,20 @@ namespace SharpJukebox
     /// </summary>
     public partial class PlaylistPage : Page
     {
+        private const string PAGE_HEADER = "Playlists";
+
+        private PlaylistManager _playlistManager;
+
         public event Action<Playlist> PlaylistSelected;
 
-        public PlaylistPage()
+        public PlaylistPage(PlaylistManager PlaylistManager)
         {
-            InitializeComponent();
-        }
+            _playlistManager = PlaylistManager;
 
-        public PlaylistPage(string Header, IEnumerable<Playlist> Playlists)
-        {
             InitializeComponent();
 
-            SetPageHeader(Header);
-            SetDataContext(Playlists);
-        }
-
-        public void SetPageHeader(string Header)
-        {
-            lblHeader.Content = Header;
-        }
-
-        public void SetDataContext(IEnumerable<Playlist> Playlists)
-        {
-            dgPlaylists.DataContext = Playlists;
+            lblHeader.Content = PAGE_HEADER;
+            dgPlaylists.DataContext = _playlistManager.Playlists;
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -52,6 +43,26 @@ namespace SharpJukebox
         private void dgPlaylists_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             e.Cancel = true;
+        }
+
+        private void NewPlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            TextInputDialog dialog = new TextInputDialog()
+            {
+                Owner = Window.GetWindow(this)
+            };
+            dialog.ShowDialog("Enter Playlist Name");
+
+            if (dialog.DialogResult == true)
+            {
+                CreatePlaylist(dialog.Result);
+            }
+        }
+
+        private void CreatePlaylist(string PlaylistName)
+        {
+            Playlist newPlaylist = _playlistManager.CreatePlaylist(PlaylistName);
+            dgPlaylists.DataContext = _playlistManager.Playlists;
         }
     }
 }

@@ -29,5 +29,13 @@ namespace SharpJukebox
             _playlistWriter.Write(Playlist);
         }
 
+        public Playlist CreatePlaylist(string PlaylistName)
+        {
+            Playlist newPlaylist = new Playlist();
+            newPlaylist.Name = PlaylistName;
+            _playlistWriter.Write(newPlaylist);
+            _playlistReader.Load();
+            return newPlaylist;
+        }
     }
 }

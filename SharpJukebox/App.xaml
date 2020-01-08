@@ -12,7 +12,7 @@
         <SolidColorBrush x:Key="DimWhiteColor">#ccc</SolidColorBrush>
         <SolidColorBrush x:Key="DarkWhiteColor">#999</SolidColorBrush>
         <SolidColorBrush x:Key="HoverBackgroundColor">#444</SolidColorBrush>
-        <SolidColorBrush x:Key="BasisBackgroundDark">#222</SolidColorBrush>
+        <SolidColorBrush x:Key="BasicBackgroundDark">#222</SolidColorBrush>
 
         <Style x:Key="BaseStyle" TargetType="Control" >
             <Setter Property="Background" Value="Transparent"/>
@@ -37,6 +37,17 @@
         <Style x:Key="HeaderTextStyle" TargetType="Control" BasedOn="{StaticResource DefaultTextStyle}">
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource DefaultTextStyle}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource DefaultTextStyle}"/>
+        <Style TargetType="Label" BasedOn="{StaticResource DefaultTextStyle}"/>
+
 
         <!--Sidebar-->
         <Style x:Key="SidebarLabelStyle" TargetType="Label" BasedOn="{StaticResource DefaultTextStyle}">
@@ -91,7 +102,6 @@
             <Setter Property="RowHeaderWidth" Value="0"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
         </Style>
-        <Style TargetType="Label" BasedOn="{StaticResource DefaultTextStyle}"/>
         <Style x:Key="DataGridRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource HoverableTextStyle}"/>
 
         <Style TargetType="DataGridCell">

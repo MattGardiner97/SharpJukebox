@@ -8,25 +8,28 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PlaylistPage">
 
+    <Page.Resources>
+        <ContextMenu x:Key="RowContextMenu">
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="View"/>
+        </ContextMenu>
+        <ContextMenu x:Key="GridContextMenu">
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="New Playlist" Click="NewPlaylistMenuItem_Click"/>
+        </ContextMenu>
+    </Page.Resources>
+    
     <DockPanel>
         <Label Name="lblHeader" Grid.Row="0" FontSize="30px" DockPanel.Dock="Top" Style="{StaticResource HeaderTextStyle}"/>
 
         <DataGrid
             Name="dgPlaylists"
-            BeginningEdit="dgPlaylists_BeginningEdit">
-
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play"/>
-                    <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="View"/>
-
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-            
+            BeginningEdit="dgPlaylists_BeginningEdit"
+            ContextMenu="{StaticResource GridContextMenu}">
 
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
                     <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}"/>
                 </Style>
             </DataGrid.Resources>
 

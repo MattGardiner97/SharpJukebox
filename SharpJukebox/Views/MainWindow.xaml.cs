@@ -282,7 +282,7 @@ namespace SharpJukebox
         private void ShowPlaylistPage()
         {
             ClearSidebarSelection();
-            PlaylistPage newPage = new PlaylistPage("Playlists", _playlistManager.Playlists);
+            PlaylistPage newPage = new PlaylistPage(_playlistManager);
             newPage.PlaylistSelected += PlaylistPage_PlaylistSelected;
             LibraryFrame.Content = newPage;
             txtSearch.Clear();

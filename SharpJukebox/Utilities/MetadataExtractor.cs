@@ -10,12 +10,12 @@ namespace SharpJukebox
     {
         private List<AudioFile> _resultList;
 
-        public ReadOnlyCollection<AudioFile> Files { get; private set; }
+        public IEnumerable<AudioFile> Files { get; private set; }
 
         public MetadataExtractor()
         {
             _resultList = new List<AudioFile>();
-            Files = new ReadOnlyCollection<AudioFile>(_resultList);
+            Files = _resultList;
         }
 
         public void Extract(IEnumerable<string> Filenames)

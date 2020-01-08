@@ -8,7 +8,7 @@ namespace SharpJukebox
     public interface IPlaylistReader
     {
         public void Load();
-        public ReadOnlyCollection<Playlist> GetPlaylists();
+        public IEnumerable<Playlist> GetPlaylists();
 
     }
 }

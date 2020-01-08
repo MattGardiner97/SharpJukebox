@@ -12,7 +12,7 @@ namespace SharpJukebox
         private ITrackLocater _fileLocater;
         private MetadataExtractor _metadataExtractor;
 
-        public ReadOnlyCollection<AudioFile> Tracks { get; private set; }
+        public IEnumerable<AudioFile> Tracks { get; private set; }
 
         public LocalLibraryManager(ITrackLocater FileLocater, MetadataExtractor MetadataExtractor)
         {
@@ -27,14 +27,14 @@ namespace SharpJukebox
             Tracks = _metadataExtractor.Files;
         }
 
-        public ReadOnlyCollection<AudioFile> Search(string Query)
+        public IEnumerable<AudioFile> Search(string Query)
         {
             var result = Tracks.Where(file =>
             file.Title.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
             file.Artist.Contains(Query, StringComparison.OrdinalIgnoreCase) ||
             file.Album.Contains(Query, StringComparison.OrdinalIgnoreCase)
             );
-            return new ReadOnlyCollection<AudioFile>(result.ToList());
+            return result;
         }
 
         public AudioFile FindByFilename(string Filename)
@@ -46,10 +46,10 @@ namespace SharpJukebox
             return null;
         }
 
-        public ReadOnlyCollection<AudioFile> FindByArtist(string ArtistName)
+        public IEnumerable<AudioFile> FindByArtist(string ArtistName)
         {
             var result = Tracks.Where(file => file.Artist == ArtistName);
-            return new ReadOnlyCollection<AudioFile>(result.ToList());
+            return result;
         }
 
         public IEnumerable<AudioFile> FindByAlbum(string Artist, string Album)

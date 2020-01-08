@@ -13,7 +13,6 @@ namespace SharpJukebox
         private static readonly string[] SUPPORTED_FILETYPES = new string[] { "mp3","wav" };
 
         private List<string> _locatedFilenames;
-        private ReadOnlyCollection<string> _result;
 
         public string[] SearchDirectories { get; set; }
 
@@ -21,12 +20,11 @@ namespace SharpJukebox
         {
             this.SearchDirectories = SearchDirectories;
             _locatedFilenames = new List<string>();
-            _result = new ReadOnlyCollection<string>(_locatedFilenames);
         }
 
-        public ReadOnlyCollection<string> GetFiles()
+        public IEnumerable<string> GetFiles()
         {
-            return _result;
+            return _locatedFilenames;
         }
 
         public void LocateFiles()

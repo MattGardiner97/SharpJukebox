@@ -10,7 +10,7 @@ namespace SharpJukebox
         private IPlaylistReader _playlistReader;
         private IPlaylistWriter _playlistWriter;
 
-        public ReadOnlyCollection<Playlist> Playlists { get { return new ReadOnlyCollection<Playlist>(_playlistReader.GetPlaylists()); } }
+        public IEnumerable<Playlist> Playlists { get { return _playlistReader.GetPlaylists(); } }
 
         public PlaylistManager(IPlaylistReader PlaylistReader,IPlaylistWriter PlaylistWriter)
         {

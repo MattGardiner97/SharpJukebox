@@ -10,6 +10,6 @@ namespace SharpJukebox
     public interface ITrackLocater
     {
         public void LocateFiles();
-        public ReadOnlyCollection<string> GetFiles();
+        public IEnumerable<string> GetFiles();
     }
 }

@@ -11,7 +11,7 @@ namespace SharpJukebox
         private List<AudioFile> _tracks;
 
         public string Name { get; set; }
-        public ReadOnlyCollection<AudioFile> Tracks { get { return new ReadOnlyCollection<AudioFile>(_tracks); } }
+        public IEnumerable<AudioFile> Tracks { get { return _tracks; } }
 
         public Playlist()
         {

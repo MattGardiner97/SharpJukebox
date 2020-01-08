@@ -77,7 +77,7 @@ namespace SharpJukebox
         {
             //Initialise audio devices
             _audioDeviceLocater.LocateDevices();
-            _audioDevice = _audioDeviceLocater.Devices[0];
+            _audioDevice = _audioDeviceLocater.Devices.First();
             _musicPlayer.SetAudioDevice(_audioDevice);
 
             //Load local files

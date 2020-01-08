@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.IO;
 
@@ -19,9 +18,9 @@ namespace SharpJukebox
             _searchLocation = SearchLocation;
         }
 
-        public ReadOnlyCollection<Playlist> GetPlaylists()
+        public IEnumerable<Playlist> GetPlaylists()
         {
-            return new ReadOnlyCollection<Playlist>(_playlists);
+            return _playlists;
         }
 
         public void Load()

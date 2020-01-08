@@ -12,7 +12,7 @@ namespace SharpJukebox
     {
         private readonly ObservableCollection<MMDevice> _devices = new ObservableCollection<MMDevice>();
 
-        public ReadOnlyCollection<MMDevice> Devices { get; private set; }
+        public IEnumerable<MMDevice> Devices { get; private set; }
 
         public AudioDeviceLocater()
         {

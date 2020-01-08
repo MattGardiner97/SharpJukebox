@@ -24,7 +24,7 @@ namespace SharpJukebox
 
         public PlayState PlayState { get; private set; } = PlayState.Stopped;
         public bool Shuffle { get; set; } = true;
-        public ReadOnlyCollection<AudioFile> Queue { get { return new ReadOnlyCollection<AudioFile>(_queue); } }
+        public IEnumerable<AudioFile> Queue { get { return _queue; } }
 
         public MusicPlayer()
         {

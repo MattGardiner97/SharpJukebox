@@ -64,5 +64,11 @@ namespace SharpJukebox
             Playlist newPlaylist = _playlistManager.CreatePlaylist(PlaylistName);
             dgPlaylists.DataContext = _playlistManager.Playlists;
         }
+
+        private void DeletePlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Playlist selectedPlaylist = (Playlist)dgPlaylists.SelectedItems[0];
+            _playlistManager.DeletePlaylist(selectedPlaylist);
+        }
     }
 }

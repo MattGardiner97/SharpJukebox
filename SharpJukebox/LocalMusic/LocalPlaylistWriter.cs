@@ -17,8 +17,20 @@ namespace SharpJukebox
 
         public void Write(Playlist Playlist)
         {
-            string path = Path.Join(_playlistPath,Playlist.Name + ".playlist");
+            string path = GetPlaylistPath(Playlist);
             File.WriteAllLines(path, Playlist.Tracks.Select(track => track.Filename));
+        }
+
+        public void Delete(Playlist Playlist)
+        {
+            string path = GetPlaylistPath(Playlist);
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        private string GetPlaylistPath(Playlist Playlist)
+        {
+            return Path.Join(_playlistPath, Playlist.Name + ".playlist");
         }
     }
 }

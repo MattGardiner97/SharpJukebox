@@ -37,5 +37,10 @@ namespace SharpJukebox
             _playlistReader.Load();
             return newPlaylist;
         }
+
+        public void DeletePlaylist(Playlist Playlist)
+        {
+            _playlistWriter.Delete(Playlist);
+        }
     }
 }

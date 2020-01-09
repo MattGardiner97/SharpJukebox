@@ -7,5 +7,6 @@ namespace SharpJukebox
     public interface IPlaylistWriter
     {
         public void Write(Playlist Playlist);
+        public void Delete(Playlist Playlist);
     }
 }

@@ -57,5 +57,10 @@ namespace SharpJukebox
             var result = Tracks.Where(file => file.Artist == Artist && file.Album == Album);
             return result;
         }
+
+        public IEnumerable<string> GetArtists()
+        {
+            return Tracks.Select(track => track.Artist).Distinct();
+        }
     }
 }

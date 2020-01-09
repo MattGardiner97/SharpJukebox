@@ -32,7 +32,6 @@ namespace SharpJukebox
         private MetadataExtractor _metadataExtractor;
         private LocalLibraryManager _localLibraryManager;
         private PlaylistManager _playlistManager;
-        private NavigationManager _navigationManager;
         private MusicPlayer _musicPlayer;
         private MusicShuffler _shuffler;
         private TrackPage _searchPage;
@@ -64,7 +63,6 @@ namespace SharpJukebox
             //Instantiate requires classes
             _metadataExtractor = new MetadataExtractor();
             _localLibraryManager = new LocalLibraryManager(_fileLocater, _metadataExtractor);
-            _navigationManager = new NavigationManager();
             _musicPlayer = new MusicPlayer();
             _shuffler = new MusicShuffler();
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
@@ -281,6 +279,21 @@ namespace SharpJukebox
             ShowTracksPage(Playlist.Name, Playlist.Tracks, true,Playlist);
         }
 
+        //////////////////////////////
+        //Artist Page Event Handlers//
+        //////////////////////////////
+        public void ArtistPage_ArtistSelected(string ArtistName)
+        {
+            IEnumerable<AudioFile> tracks = _localLibraryManager.FindByArtist(ArtistName);
+            ShowTracksPage(ArtistName, tracks);
+        }
+
+        public void ArtistPage_PlayArtistSelected(string ArtistName)
+        {
+            IEnumerable<AudioFile> tracks = _localLibraryManager.FindByArtist(ArtistName);
+            PlayTracks(tracks);
+        }
+
 
         //////////////////
         //User Functions//
@@ -314,17 +327,11 @@ namespace SharpJukebox
         private void ShowArtistPage()
         {
             ClearSidebarSelection();
-
-            throw new Exception();
-
-            //string[] artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct().ToArray();
-
-            //LibraryPage newPage = new LibraryPage(_playlistManager.Playlists);
-            //newPage.SetPageHeader("Artists");
-            //newPage.SetDataGridItems(artists);
-            //newPage.ArtistSelected += LibraryPage_ArtistSelected;
-            //LibraryFrame.Content = newPage;
-            //txtSearch.Clear();
+            IEnumerable<string> artists = _localLibraryManager.Tracks.Select(track => track.Artist).Distinct();
+            ArtistPage newPage = new ArtistPage("Artists", artists);
+            newPage.ArtistSelected += ArtistPage_ArtistSelected;
+            LibraryFrame.Content = newPage;
+            txtSearch.Clear();
         }
         private void UpdateSearchBoxPlaceholder()
         {
@@ -348,6 +355,11 @@ namespace SharpJukebox
             lblSidebarArtists.Style = defaultStyle;
             lblSidebarPlaylists.Style = defaultStyle;
             lblSidebarQueue.Style = defaultStyle;
+        }
+
+        private void PlayTracks(IEnumerable<AudioFile> Tracks)
+        {
+
         }
     }
 }

@@ -19,14 +19,27 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
+
+        <Storyboard x:Key="progTrackProgress_AnimStoryboard">
+            <DoubleAnimation
+                FillBehavior="Stop"
+                Storyboard.TargetName="progTrackProgress"
+                Storyboard.TargetProperty="Value"
+                From="0" To="100"/>
+        </Storyboard>
+
     </Window.Resources>
-    
+
 
     <DockPanel Background="{StaticResource WindowGradient}">
-        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="5px">
-            <local:PreviousButton x:Name="prevButton"/>
-            <local:PlayPauseButton x:Name="playPauseButton"/>
-            <local:NextButton x:Name="nextButton"/>
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Orientation="Vertical" Background="{StaticResource BasicBackgroundDark}">
+            <ProgressBar Name="progTrackProgress" Minimum="0" Maximum="100" Height="12.5" HorizontalAlignment="Stretch" Margin="20 10 20 5"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <local:PreviousButton x:Name="prevButton"/>
+                <local:PlayPauseButton x:Name="playPauseButton"/>
+                <local:NextButton x:Name="nextButton"/>
+            </StackPanel>
         </StackPanel>
 
         <StackPanel DockPanel.Dock="Left" Margin="5 5 10 5">
@@ -36,7 +49,7 @@
             <Label Name="lblSidebarQueue" Content="Queue" Style="{StaticResource SidebarLabelStyle}" MouseUp="lblSidebarQueue_MouseUp"/>
             <local:PlaceholderTextbox Placeholder="Search..." x:Name="txtSearch" MinWidth="125" TextChanged="txtSearch_TextChanged"/>
         </StackPanel>
-        
+
 
         <Frame Name="LibraryFrame" NavigationUIVisibility="Hidden"/>
 

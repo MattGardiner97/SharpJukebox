@@ -26,6 +26,8 @@ namespace SharpJukebox
         public bool Shuffle { get; set; } = true;
         public IEnumerable<AudioFile> Queue { get { return _queue; } }
 
+        public event Action TrackFinished;
+
         public MusicPlayer()
         {
             _queue = new List<AudioFile>();
@@ -43,6 +45,14 @@ namespace SharpJukebox
                 .ToWaveSource();
             _soundOut = new WasapiOut() { Latency = 100, Device = _currentDevice };
             _soundOut.Initialize(_waveSource);
+
+            _soundOut.Stopped += _soundOut_Stopped;
+        }
+
+        private void _soundOut_Stopped(object sender, PlaybackStoppedEventArgs e)
+        {
+            if(TrackFinished != null)
+             TrackFinished();
         }
 
         public void Play()
@@ -137,6 +147,34 @@ namespace SharpJukebox
         public void SetAudioDevice(MMDevice Device)
         {
             _currentDevice = Device;
+        }
+
+        public TimeSpan GetCurrentTrackTimePosition()
+        {
+            if (_currentTrack == null || _waveSource == null)
+                return TimeSpan.Zero;
+
+            return _currentTrack.Duration * GetCurrentTrackCompletion();
+        }
+
+        public TimeSpan GetCurrentTrackLength()
+        {
+            if (_currentTrack == null || _waveSource == null)
+                return TimeSpan.Zero;
+
+            return _currentTrack.Duration;
+        }
+
+        public double GetCurrentTrackCompletion()
+        {
+            if (_currentTrack == null || _waveSource == null)
+                return 0;
+
+            var current = _waveSource.Position;
+            var total = _waveSource.Length;
+            var result = (double)current / total;
+
+            return result;
         }
     }
 

@@ -62,8 +62,7 @@ namespace SharpJukebox
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            AudioFile[] selected = new AudioFile[dgTracks.SelectedItems.Count];
-            dgTracks.SelectedItems.CopyTo(selected, 0);
+            IEnumerable<AudioFile> selected = dgTracks.SelectedItems.Cast<AudioFile>();
             TracksSelected(selected, _tracks);
         }
 

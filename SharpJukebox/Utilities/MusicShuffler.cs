@@ -11,53 +11,41 @@ namespace SharpJukebox
 
         private Random _random = new Random();
 
-        public AudioFile[] Shuffle(AudioFile[] Files)
+        public IEnumerable<AudioFile> Shuffle(IEnumerable<AudioFile> Tracks, AudioFile First)
         {
-            AudioFile[] result = new AudioFile[Files.Length];
-            Files.CopyTo(result, 0);
+            List<AudioFile> resultList = new List<AudioFile>(Tracks);
 
-            for(int iteration = 0; iteration < SHUFFLE_ITERATIONS;iteration++)
+            int trackCount = resultList.Count;
+
+            for (int shufflerIteration = 0; shufflerIteration < SHUFFLE_ITERATIONS; shufflerIteration++)
             {
-                for(int index = 0; index < result.Length;index++)
+                for(int i = 0; i < trackCount;i++)
                 {
-                    int randomIndex = _random.Next(0, result.Length);
-                    Swap(result, index, randomIndex);
+                    int firstIndex = _random.Next(0, trackCount);
+                    int secondIndex = _random.Next(0, trackCount);
+                    Swap(resultList, firstIndex, secondIndex);
                 }
             }
 
-            return result;
-        }
-        public AudioFile[] Shuffle(AudioFile[] Files, AudioFile FirstFile)
-        {
-            var shuffled = Shuffle(Files);
-            int targetIndex = GetIndexOf(shuffled, FirstFile);
-            Swap(shuffled, 0, targetIndex);
-            return shuffled;
+            if(First != null)
+            {
+                int index = GetIndexOfTrack(resultList, First);
+                Swap(resultList, 0, index);
+            }
+
+            return resultList;
         }
 
-        public AudioFile[] Shuffle(IEnumerable<AudioFile> Files)
+        private int GetIndexOfTrack(List<AudioFile> Files, AudioFile Target)
         {
-            return Shuffle(Files.ToArray());
-        }
-
-        public AudioFile[] Shuffle(IEnumerable<AudioFile> Files, AudioFile FirstFile)
-        {
-            var shuffled = Shuffle(Files.ToArray());
-            int targetIndex = GetIndexOf(shuffled, FirstFile);
-            Swap(shuffled, 0, targetIndex);
-            return shuffled;
-        }
-
-        private int GetIndexOf(AudioFile[] Files, AudioFile Target)
-        {
-            for (int i = 0; i < Files.Length; i++)
+            for (int i = 0; i < Files.Count; i++)
                 if (Files[i] == Target)
                     return i;
 
             return -1;
         }
 
-        private void Swap(AudioFile[] Files, int Index1, int Index2)
+        private void Swap(List<AudioFile> Files, int Index1, int Index2)
         {
             AudioFile tmp = Files[Index1];
             Files[Index1] = Files[Index2];

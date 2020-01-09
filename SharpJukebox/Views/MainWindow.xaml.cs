@@ -33,7 +33,7 @@ namespace SharpJukebox
         private LocalLibraryManager _localLibraryManager;
         private PlaylistManager _playlistManager;
         private MusicPlayer _musicPlayer;
-        private MusicShuffler _shuffler;
+        private QueueBuilder _queueBuilder;
         private TrackPage _searchPage;
 
         //Animation variables
@@ -53,7 +53,7 @@ namespace SharpJukebox
             ConfigurationLoader configLoader = new ConfigurationLoader();
             configLoader.LoadFromFile(configFilename);
             _config = configLoader.Configuration;
-            
+
             //Get list of Music search locations
             List<string> searchLocations = new List<string>();
             searchLocations.Add(System.IO.Path.Join(AppContext.BaseDirectory, "Music"));
@@ -64,10 +64,10 @@ namespace SharpJukebox
             _metadataExtractor = new MetadataExtractor();
             _localLibraryManager = new LocalLibraryManager(_fileLocater, _metadataExtractor);
             _musicPlayer = new MusicPlayer();
-            _shuffler = new MusicShuffler();
+            _queueBuilder = new QueueBuilder();
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
-            _playlistWriter = new LocalPlaylistWriter(System.IO.Path.Join(AppContext.BaseDirectory,"Playlists"));
-            _playlistManager = new PlaylistManager(_playlistReader,_playlistWriter);
+            _playlistWriter = new LocalPlaylistWriter(System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
+            _playlistManager = new PlaylistManager(_playlistReader, _playlistWriter);
 
             //Initialise the search page
             _searchPage = new TrackPage();
@@ -213,31 +213,11 @@ namespace SharpJukebox
         /////////////////////////////
         private void TrackPage_TracksSelected(IEnumerable<AudioFile> Selected, IEnumerable<AudioFile> AllTracks)
         {
-            IEnumerable<AudioFile> tracksToPlay = null;
-            if (_musicPlayer.Shuffle == true)
-            {
-                if (Selected.Count() > 1)
-                    tracksToPlay = _shuffler.Shuffle(Selected);
-                else
-                    tracksToPlay = _shuffler.Shuffle(AllTracks, Selected.First());
-            }
+            if (Selected.Count() == 1)
+                PlayTracks(AllTracks, Selected.First());
             else
-            {
-                var result = new List<AudioFile>(AllTracks);
-                result.Remove(Selected.First());
-                result.Insert(0, Selected.First());
-                tracksToPlay = result;
-            }
+                PlayTracks(Selected, null);
 
-            _musicPlayer.ClearQueue();
-            _musicPlayer.AddToQueue(tracksToPlay);
-            _musicPlayer.Play();
-            playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
-
-            //Setup progress bar animation
-            DoubleAnimation anim = (DoubleAnimation)_trackProgressStoryboard.Children[0];
-            anim.Duration = _musicPlayer.GetCurrentTrackLength();
-            _trackProgressStoryboard.Begin();
         }
 
         private void TrackPage_ArtistSelected(string Artist)
@@ -276,7 +256,7 @@ namespace SharpJukebox
         ////////////////////////////////
         private void PlaylistPage_PlaylistSelected(Playlist Playlist)
         {
-            ShowTracksPage(Playlist.Name, Playlist.Tracks, true,Playlist);
+            ShowTracksPage(Playlist.Name, Playlist.Tracks, true, Playlist);
         }
 
         //////////////////////////////
@@ -291,7 +271,7 @@ namespace SharpJukebox
         public void ArtistPage_PlayArtistSelected(string ArtistName)
         {
             IEnumerable<AudioFile> tracks = _localLibraryManager.FindByArtist(ArtistName);
-            PlayTracks(tracks);
+            PlayTracks(tracks, null);
         }
 
 
@@ -347,7 +327,7 @@ namespace SharpJukebox
             }
         }
 
-       private void ClearSidebarSelection()
+        private void ClearSidebarSelection()
         {
             var defaultStyle = (Style)Application.Current.Resources["SidebarLabelStyle"];
 
@@ -357,9 +337,20 @@ namespace SharpJukebox
             lblSidebarQueue.Style = defaultStyle;
         }
 
-        private void PlayTracks(IEnumerable<AudioFile> Tracks)
+        private void PlayTracks(IEnumerable<AudioFile> Tracks, AudioFile First)
         {
+            IEnumerable<AudioFile> queue = null;
+            queue = _queueBuilder.BuildQueue(Tracks, First, _musicPlayer.Shuffle);
 
+            _musicPlayer.ClearQueue();
+            _musicPlayer.AddToQueue(queue);
+            _musicPlayer.Play();
+            playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
+
+            //Setup progress bar animation
+            DoubleAnimation anim = (DoubleAnimation)_trackProgressStoryboard.Children[0];
+            anim.Duration = _musicPlayer.GetCurrentTrackLength();
+            _trackProgressStoryboard.Begin();
         }
     }
 }

@@ -10,8 +10,8 @@
 
     <Page.Resources>
         <ContextMenu x:Key="RowContextMenu">
-            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play"/>
-            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="View"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Play" Click="PlayMenuItem_Click"/>
+            <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="View" Click="ViewPlayMenuItem_Click"/>
             <MenuItem Template="{StaticResource ContextMenuTemplate}" Header="Delete Playlist" Click="DeletePlaylistMenuItem_Click"/>
         </ContextMenu>
         <ContextMenu x:Key="GridContextMenu">
@@ -25,7 +25,9 @@
         <DataGrid
             Name="dgPlaylists"
             BeginningEdit="dgPlaylists_BeginningEdit"
-            ContextMenu="{StaticResource GridContextMenu}">
+            ContextMenu="{StaticResource GridContextMenu}"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False">
 
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">

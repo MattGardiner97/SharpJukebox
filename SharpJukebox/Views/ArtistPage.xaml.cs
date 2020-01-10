@@ -27,6 +27,7 @@ namespace SharpJukebox
             InitializeComponent();
 
             dgArtists.DataContext = Artists;
+            lblHeader.Content = Header;
         }
 
         private void dgArtists_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)

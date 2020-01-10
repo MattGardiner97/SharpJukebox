@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ namespace SharpJukebox
         private PlaylistManager _playlistManager;
 
         public event Action<Playlist> PlaylistSelected;
+        public event Action<Playlist> PlayPlaylistSelected;
 
         public PlaylistPage(PlaylistManager PlaylistManager)
         {
@@ -37,7 +39,7 @@ namespace SharpJukebox
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Playlist selected = (Playlist)dgPlaylists.SelectedItems[0];
-            PlaylistSelected(selected);
+            PlaylistSelected?.Invoke(selected);
         }
 
         private void dgPlaylists_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -62,13 +64,36 @@ namespace SharpJukebox
         private void CreatePlaylist(string PlaylistName)
         {
             Playlist newPlaylist = _playlistManager.CreatePlaylist(PlaylistName);
-            dgPlaylists.DataContext = _playlistManager.Playlists;
+            
+            RefreshDatagrid(_playlistManager.Playlists);
         }
 
         private void DeletePlaylistMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Playlist selectedPlaylist = (Playlist)dgPlaylists.SelectedItems[0];
-            _playlistManager.DeletePlaylist(selectedPlaylist);
+            foreach(Playlist selectedPlaylist in dgPlaylists.SelectedItems)
+                _playlistManager.DeletePlaylist(selectedPlaylist);
+
+            RefreshDatagrid(_playlistManager.Playlists);
+        }
+
+        private void ViewPlayMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Playlist selected = (Playlist)dgPlaylists.SelectedItems[0];
+            PlaylistSelected?.Invoke(selected);
+        }
+
+        private void PlayMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Playlist selected = (Playlist)dgPlaylists.SelectedItems[0];
+            PlayPlaylistSelected?.Invoke(selected);
+        }
+
+        private void RefreshDatagrid(IEnumerable<Playlist> DataContext)
+        {
+            //Datagrids don't appear to automatically update with changes to the DataContext source, so we have to set the property to null
+            //before setting it back to the PlaylistManager results
+            dgPlaylists.DataContext = null;
+            dgPlaylists.DataContext = DataContext;
         }
     }
 }

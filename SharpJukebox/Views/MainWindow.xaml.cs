@@ -258,6 +258,10 @@ namespace SharpJukebox
         {
             ShowTracksPage(Playlist.Name, Playlist.Tracks, true, Playlist);
         }
+        private void NewPage_PlayPlaylistSelected(Playlist Playlist)
+        {
+            PlayTracks(Playlist.Tracks, null);
+        }
 
         //////////////////////////////
         //Artist Page Event Handlers//
@@ -300,6 +304,7 @@ namespace SharpJukebox
             ClearSidebarSelection();
             PlaylistPage newPage = new PlaylistPage(_playlistManager);
             newPage.PlaylistSelected += PlaylistPage_PlaylistSelected;
+            newPage.PlayPlaylistSelected += NewPage_PlayPlaylistSelected;
             LibraryFrame.Content = newPage;
             txtSearch.Clear();
         }

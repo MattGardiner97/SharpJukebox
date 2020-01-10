@@ -20,7 +20,9 @@
 
         <DataGrid
             Name="dgArtists"
-            BeginningEdit="dgArtists_BeginningEdit">
+            BeginningEdit="dgArtists_BeginningEdit"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False">
 
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">

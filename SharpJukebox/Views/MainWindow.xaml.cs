@@ -121,13 +121,14 @@ namespace SharpJukebox
             if (_musicPlayer.PlayState == PlayState.Playing)
             {
                 _musicPlayer.Pause();
-                _trackProgressStoryboard.Pause();
+                //_trackProgressStoryboard.Pause();
                 playPauseButton.DisplayState = PlayButtonDisplayState.Play;
             }
             else if (_musicPlayer.PlayState == PlayState.Paused)
             {
                 _musicPlayer.Resume();
-                _trackProgressStoryboard.Resume();
+                seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
+                //_trackProgressStoryboard.Resume();
                 playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
             }
         }
@@ -352,10 +353,12 @@ namespace SharpJukebox
             _musicPlayer.Play();
             playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
 
+            seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
+
             //Setup progress bar animation
-            DoubleAnimation anim = (DoubleAnimation)_trackProgressStoryboard.Children[0];
-            anim.Duration = _musicPlayer.GetCurrentTrackLength();
-            _trackProgressStoryboard.Begin();
+            //DoubleAnimation anim = (DoubleAnimation)_trackProgressStoryboard.Children[0];
+            //anim.Duration = _musicPlayer.GetCurrentTrackLength();
+            //_trackProgressStoryboard.Begin();
         }
     }
 }

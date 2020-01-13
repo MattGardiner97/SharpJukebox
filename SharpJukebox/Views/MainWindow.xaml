@@ -33,7 +33,8 @@
 
     <DockPanel Background="{StaticResource WindowGradient}">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Orientation="Vertical" Background="{StaticResource BasicBackgroundDark}">
-            <ProgressBar Name="progTrackProgress" Minimum="0" Maximum="100" Height="12.5" HorizontalAlignment="Stretch" Margin="20 10 20 5"/>
+            <local:SeekBar/>
+            <!--<ProgressBar Name="progTrackProgress" Minimum="0" Maximum="100" Height="12.5" HorizontalAlignment="Stretch" Margin="20 10 20 5"/>-->
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <local:PreviousButton x:Name="prevButton"/>

@@ -26,7 +26,11 @@ namespace SharpJukebox
         public bool Shuffle { get; set; } = true;
         public IEnumerable<AudioFile> Queue { get { return _queue; } }
 
-        public event Action TrackFinished;
+        public event Action Started;
+        public event Action Paused;
+        public event Action Resumed;
+        public event Action Stopped;
+        public event Action<double> Seeked;
 
         public MusicPlayer()
         {
@@ -51,8 +55,14 @@ namespace SharpJukebox
 
         private void _soundOut_Stopped(object sender, PlaybackStoppedEventArgs e)
         {
-            if(TrackFinished != null)
-             TrackFinished();
+            if (_currentTrackIndex + 1 >= _queue.Count)
+            {
+                PlayState = PlayState.Stopped;
+                Stopped?.Invoke();
+                return;
+            }
+
+            NextTrack();
         }
 
         public void Play()
@@ -66,6 +76,7 @@ namespace SharpJukebox
             Load();
             _soundOut.Play();
             this.PlayState = PlayState.Playing;
+            Started?.Invoke();
         }
 
         public void Resume()
@@ -75,7 +86,7 @@ namespace SharpJukebox
 
             _soundOut.Play();
             this.PlayState = PlayState.Playing;
-
+            Resumed?.Invoke();
         }
 
         public void Pause()
@@ -83,11 +94,20 @@ namespace SharpJukebox
             _soundOut.Pause();
 
             this.PlayState = PlayState.Paused;
+            Paused?.Invoke();
         }
 
-        public void Seek(int Time)
+        public void Seek(double TrackPercent)
         {
+            if (_currentTrack == null)
+                return;
 
+            if (TrackPercent < 0 || TrackPercent > 1)
+                return;
+
+            TimeSpan targetTime = _waveSource.GetLength() * TrackPercent;
+            _waveSource.SetPosition(targetTime);
+            Seeked?.Invoke(TrackPercent);
         }
 
         public void NextTrack()
@@ -96,6 +116,7 @@ namespace SharpJukebox
                 return;
 
             _currentTrackIndex++;
+            Play();
         }
 
         public void PreviousTrack()
@@ -104,14 +125,18 @@ namespace SharpJukebox
                 return;
 
             _currentTrackIndex--;
+            Play();
+
         }
 
         public void Cleanup()
         {
             this.PlayState = PlayState.Stopped;
 
+
             if (_soundOut != null)
             {
+                _soundOut.Stopped -= _soundOut_Stopped;
                 _soundOut.Dispose();
                 _soundOut = null;
             }
@@ -141,6 +166,7 @@ namespace SharpJukebox
         {
             Cleanup();
             _currentTrack = null;
+            _currentTrackIndex = 0;
             _queue.Clear();
         }
 

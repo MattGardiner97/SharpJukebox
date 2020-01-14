@@ -93,7 +93,11 @@ namespace SharpJukebox
             //Set event handlers
             _searchPage.TracksSelected += TrackPage_TracksSelected;
             playPauseButton.Pressed += playPauseButton_Clicked;
-
+            seekBar.Seeked += seekBar_Seeked;
+            _musicPlayer.Started += musicPlayer_Started;
+            _musicPlayer.Paused += musicPlayer_Paused;
+            _musicPlayer.Seeked += musicPlayer_Seeked;
+            _musicPlayer.Resumed += musicPlayer_Resumed;
 
             //Load the required style
             _sidebarSelectedStyle = (Style)Application.Current.Resources["SidebarLabelSelectedStyle"];
@@ -113,31 +117,49 @@ namespace SharpJukebox
             _audioDevice = null;
         }
 
+        /////////////////////////
+        //Player Event Handlers//
+        /////////////////////////
+        private void musicPlayer_Started()
+        {
+            playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
+            seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
+        }
+
+        private void musicPlayer_Resumed()
+        {
+            playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
+            seekBar.ResumeAnimation();
+        }
+
+        private void musicPlayer_Paused()
+        {
+            playPauseButton.DisplayState = PlayButtonDisplayState.Play;
+            seekBar.PauseAnimation();
+        }
+
+        private void musicPlayer_Seeked(double NewPercentage)
+        {
+            seekBar.StartAnimation(NewPercentage, _musicPlayer.GetCurrentTrackLength());
+            if (_musicPlayer.PlayState == PlayState.Paused)
+                seekBar.PauseAnimation();
+        }
+
         /////////////////////////////////
         //Player Control Event Handlers//
         /////////////////////////////////
         private void playPauseButton_Clicked()
         {
             if (_musicPlayer.PlayState == PlayState.Playing)
-            {
                 _musicPlayer.Pause();
-                //_trackProgressStoryboard.Pause();
-                playPauseButton.DisplayState = PlayButtonDisplayState.Play;
-            }
             else if (_musicPlayer.PlayState == PlayState.Paused)
-            {
                 _musicPlayer.Resume();
-                seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
-                //_trackProgressStoryboard.Resume();
-                playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
-            }
         }
 
-        //private void LibraryPage_ArtistSelected(string Artist)
-        //{
-        //    string artistName = Artist;
-        //    ShowTracksPage(artistName, _localLibraryManager.FindByArtist(artistName));
-        //}
+        private void seekBar_Seeked(double TargetPercent)
+        {
+            _musicPlayer.Seek(TargetPercent);
+        }
 
         //////////////////////////
         //Sidebar Event Handlers//
@@ -351,14 +373,8 @@ namespace SharpJukebox
             _musicPlayer.ClearQueue();
             _musicPlayer.AddToQueue(queue);
             _musicPlayer.Play();
-            playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
-
-            seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
-
-            //Setup progress bar animation
-            //DoubleAnimation anim = (DoubleAnimation)_trackProgressStoryboard.Children[0];
-            //anim.Duration = _musicPlayer.GetCurrentTrackLength();
-            //_trackProgressStoryboard.Begin();
         }
+
+
     }
 }

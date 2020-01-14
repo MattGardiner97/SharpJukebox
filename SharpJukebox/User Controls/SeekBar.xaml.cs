@@ -36,8 +36,6 @@ namespace SharpJukebox
 
             double targetFraction = clickPositionX / gridWidth;
             Seeked?.Invoke(targetFraction);
-            var x = this.Value;
-            ;
         }
 
         public void StartAnimation(TimeSpan TrackLength)
@@ -45,8 +43,20 @@ namespace SharpJukebox
             StartAnimation(0, 1, TrackLength);
         }
 
+        public void StartAnimation(double Start, TimeSpan TrackLength)
+        {
+            //return;
+
+            double remainingPercent = 1 - Start;
+            TimeSpan remainingLength = TrackLength * remainingPercent;
+            StartAnimation(Start, 1, remainingLength);
+        }
+
         private void StartAnimation(double Start, double End, TimeSpan Length)
         {
+            if (_storyboard != null)
+                _storyboard.Stop();
+
             _storyboard = new Storyboard();
 
             _anim = new DoubleAnimation(Start, End, new Duration(Length));
@@ -70,11 +80,17 @@ namespace SharpJukebox
 
         public void ResumeAnimation()
         {
+            if (_anim == null || _storyboard == null)
+                return;
+
             _storyboard.Resume();
         }
 
         public void StopAnimation()
         {
+            if (_anim == null || _storyboard == null)
+                return;
+
             _storyboard.Stop();
         }
     }

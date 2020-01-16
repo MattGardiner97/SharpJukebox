@@ -31,8 +31,20 @@
             CanUserDeleteRows="False">
 
             <DataGrid.Resources>
-                
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0"/>
 
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentlyPlaying}" Value="True">
+                            <Setter Property="Foreground" Value="LimeGreen"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </DataTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
                     <Setter Property="ContextMenu" Value="{StaticResource DataGridRowContextMenu}"/>
                     <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>

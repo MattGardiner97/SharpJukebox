@@ -112,5 +112,15 @@ namespace SharpJukebox
 
             PlaylistUpdated(PlaylistContext);
         }
+
+        //This method is used to enforce the currently playing track style
+        //This is the simplest way to activate the DataTrigger which is bound to the 'CurrentlyPlaying' property
+        public void RefreshDataContext()
+        {
+            //We reset the DataContext to force a redraw
+            var context = dgTracks.DataContext;
+            dgTracks.DataContext = null;
+            dgTracks.DataContext = context;
+        }
     }
 }

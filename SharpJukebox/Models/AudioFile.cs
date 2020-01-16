@@ -14,6 +14,7 @@ namespace SharpJukebox
         public string Album { get; set; }
         public TimeSpan Duration { get; set; }
         public string DurationString => Duration.ToString("mm\\:ss");
+        public bool CurrentlyPlaying { get; set; } = false;
 
         public override string ToString()
         {

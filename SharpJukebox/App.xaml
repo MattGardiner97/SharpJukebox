@@ -13,6 +13,7 @@
         <SolidColorBrush x:Key="DarkWhiteColor">#999</SolidColorBrush>
         <SolidColorBrush x:Key="HoverBackgroundColor">#444</SolidColorBrush>
         <SolidColorBrush x:Key="BasicBackgroundDark">#222</SolidColorBrush>
+        <SolidColorBrush x:Key="DataGridRowColor">#333</SolidColorBrush>
 
         <Style x:Key="BaseStyle" TargetType="Control" >
             <Setter Property="Background" Value="Transparent"/>
@@ -102,12 +103,14 @@
             <Setter Property="RowHeaderWidth" Value="0"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
         </Style>
-        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource HoverableTextStyle}"/>
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource HoverableTextStyle}">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
 
         <Style TargetType="DataGridCell">
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#333"/>
+                    <Setter Property="Background" Value="Transparent"/>
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>

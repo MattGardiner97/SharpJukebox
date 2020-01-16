@@ -18,7 +18,7 @@ namespace SharpJukebox
         private MMDevice _currentDevice;
 
         private int _currentTrackIndex = -1;
-        private AudioFile _currentTrack;
+        public AudioFile CurrentTrack { get; private set; }
 
         private List<AudioFile> _queue;
 
@@ -39,11 +39,14 @@ namespace SharpJukebox
 
         public void Load()
         {
+            
+
             Cleanup();
 
-            _currentTrack = _queue[_currentTrackIndex];
+            CurrentTrack = _queue[_currentTrackIndex];
+            CurrentTrack.CurrentlyPlaying = true;
 
-            _waveSource = CodecFactory.Instance.GetCodec(_currentTrack.Filename)
+            _waveSource = CodecFactory.Instance.GetCodec(CurrentTrack.Filename)
                 .ToSampleSource()
                 .ToMono()
                 .ToWaveSource();
@@ -76,7 +79,7 @@ namespace SharpJukebox
             Load();
             _soundOut.Play();
             this.PlayState = PlayState.Playing;
-            Started?.Invoke(_currentTrack);
+            Started?.Invoke(CurrentTrack);
         }
 
         public void Resume()
@@ -99,7 +102,7 @@ namespace SharpJukebox
 
         public void Seek(double TrackPercent)
         {
-            if (_currentTrack == null)
+            if (CurrentTrack == null)
                 return;
 
             if (TrackPercent < 0 || TrackPercent > 1)
@@ -133,6 +136,9 @@ namespace SharpJukebox
         {
             this.PlayState = PlayState.Stopped;
 
+            if (CurrentTrack != null)
+                CurrentTrack.CurrentlyPlaying = false;
+
 
             if (_soundOut != null)
             {
@@ -165,7 +171,7 @@ namespace SharpJukebox
         public void ClearQueue()
         {
             Cleanup();
-            _currentTrack = null;
+            CurrentTrack = null;
             _currentTrackIndex = 0;
             _queue.Clear();
         }
@@ -177,23 +183,23 @@ namespace SharpJukebox
 
         public TimeSpan GetCurrentTrackTimePosition()
         {
-            if (_currentTrack == null || _waveSource == null)
+            if (CurrentTrack == null || _waveSource == null)
                 return TimeSpan.Zero;
 
-            return _currentTrack.Duration * GetCurrentTrackCompletion();
+            return CurrentTrack.Duration * GetCurrentTrackCompletion();
         }
 
         public TimeSpan GetCurrentTrackLength()
         {
-            if (_currentTrack == null || _waveSource == null)
+            if (CurrentTrack == null || _waveSource == null)
                 return TimeSpan.Zero;
 
-            return _currentTrack.Duration;
+            return CurrentTrack.Duration;
         }
 
         public double GetCurrentTrackCompletion()
         {
-            if (_currentTrack == null || _waveSource == null)
+            if (CurrentTrack == null || _waveSource == null)
                 return 0;
 
             var current = _waveSource.Position;

@@ -126,6 +126,11 @@ namespace SharpJukebox
         /////////////////////////
         private void musicPlayer_Started(AudioFile NewTrack)
         {
+            //If the current page is a track page, highlight the row with the playing song
+            TrackPage _currentTrackPage = LibraryFrame.Content as TrackPage;
+            if (_currentTrackPage != null)
+                _currentTrackPage.RefreshDataContext();
+
             lblTrackName.Content = $"{NewTrack.Title} - {NewTrack.Artist}";
             playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
             seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
@@ -345,6 +350,7 @@ namespace SharpJukebox
             newPage.AlbumSelected += TrackPage_AlbumSelected;
             newPage.AddToPlaylistSelected += TrackPage_AddPlaylistSelected;
             newPage.PlaylistUpdated += Trackpage_PlaylistUpdated;
+            newPage.RefreshDataContext();
 
             LibraryFrame.Content = newPage;
             if (ClearSearch == true)

@@ -57,6 +57,9 @@ namespace SharpJukebox
         private void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ResetStyle();
+
+            Pressed?.Invoke();
+
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)

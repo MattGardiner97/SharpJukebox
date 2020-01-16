@@ -19,21 +19,19 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
-
-        <Storyboard x:Key="progTrackProgress_AnimStoryboard">
-            <DoubleAnimation
-                FillBehavior="Stop"
-                Storyboard.TargetName="progTrackProgress"
-                Storyboard.TargetProperty="Value"
-                From="0" To="100"/>
-        </Storyboard>
-
     </Window.Resources>
 
 
     <DockPanel Background="{StaticResource WindowGradient}">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Orientation="Vertical" Background="{StaticResource BasicBackgroundDark}">
-            <local:SeekBar x:Name="seekBar" Seeked="seekBar_Seeked"/>
+            <Label Name="lblTrackName" HorizontalAlignment="Center" Margin="0 2.5 0 0"/>
+
+            <DockPanel HorizontalAlignment="Stretch">
+                <Label Name="lblCurrentTime" Content="00:00" DockPanel.Dock="Left" Margin="10 0 10 0" VerticalAlignment="Center"/>
+                <Label Name="lblLength" Content="00:00" DockPanel.Dock="Right" Margin="10 0 10 0" VerticalAlignment="Center"/>
+                <local:SeekBar x:Name="seekBar" Seeked="seekBar_Seeked" />
+
+            </DockPanel>
             <!--<ProgressBar Name="progTrackProgress" Minimum="0" Maximum="100" Height="12.5" HorizontalAlignment="Stretch" Margin="20 10 20 5"/>-->
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

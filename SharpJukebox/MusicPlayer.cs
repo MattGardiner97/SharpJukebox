@@ -26,7 +26,7 @@ namespace SharpJukebox
         public bool Shuffle { get; set; } = true;
         public IEnumerable<AudioFile> Queue { get { return _queue; } }
 
-        public event Action Started;
+        public event Action<AudioFile> Started;
         public event Action Paused;
         public event Action Resumed;
         public event Action Stopped;
@@ -76,7 +76,7 @@ namespace SharpJukebox
             Load();
             _soundOut.Play();
             this.PlayState = PlayState.Playing;
-            Started?.Invoke();
+            Started?.Invoke(_currentTrack);
         }
 
         public void Resume()
@@ -121,7 +121,7 @@ namespace SharpJukebox
 
         public void PreviousTrack()
         {
-            if (_queue.Count == 0 || _currentTrackIndex - 1 <= _queue.Count)
+            if (_queue.Count == 0 || _currentTrackIndex - 1 < 0)
                 return;
 
             _currentTrackIndex--;

@@ -35,9 +35,7 @@ namespace SharpJukebox
         private MusicPlayer _musicPlayer;
         private QueueBuilder _queueBuilder;
         private TrackPage _searchPage;
-
-        //Animation variables
-        private Storyboard _trackProgressStoryboard;
+        private DispatcherTimer _trackProgressTimer;
 
         private Style _sidebarSelectedStyle;
 
@@ -68,6 +66,12 @@ namespace SharpJukebox
             _playlistReader = new LocalPlaylistReader(_localLibraryManager, System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
             _playlistWriter = new LocalPlaylistWriter(System.IO.Path.Join(AppContext.BaseDirectory, "Playlists"));
             _playlistManager = new PlaylistManager(_playlistReader, _playlistWriter);
+            _trackProgressTimer = new DispatcherTimer();
+            _trackProgressTimer.Interval = TimeSpan.FromSeconds(0.5);
+            _trackProgressTimer.Tick += (_, __) =>
+            {
+                lblCurrentTime.Content = _musicPlayer.GetCurrentTrackTimePosition().ToString(@"mm\:ss");
+            };
 
             //Initialise the search page
             _searchPage = new TrackPage();
@@ -93,11 +97,14 @@ namespace SharpJukebox
             //Set event handlers
             _searchPage.TracksSelected += TrackPage_TracksSelected;
             playPauseButton.Pressed += playPauseButton_Clicked;
+            nextButton.Pressed += nextButton_Clicked;
+            prevButton.Pressed += prevButton_Clicked;
             seekBar.Seeked += seekBar_Seeked;
             _musicPlayer.Started += musicPlayer_Started;
             _musicPlayer.Paused += musicPlayer_Paused;
             _musicPlayer.Seeked += musicPlayer_Seeked;
             _musicPlayer.Resumed += musicPlayer_Resumed;
+            _musicPlayer.Stopped += musicPlayer_Stopped;
 
             //Load the required style
             _sidebarSelectedStyle = (Style)Application.Current.Resources["SidebarLabelSelectedStyle"];
@@ -105,9 +112,6 @@ namespace SharpJukebox
             //Display initial page
             ShowTracksPage("All", _localLibraryManager.Tracks);
             lblSidebarAll.Style = _sidebarSelectedStyle;
-
-            //Setup animations
-            _trackProgressStoryboard = (Storyboard)Resources["progTrackProgress_AnimStoryboard"];
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -120,10 +124,13 @@ namespace SharpJukebox
         /////////////////////////
         //Player Event Handlers//
         /////////////////////////
-        private void musicPlayer_Started()
+        private void musicPlayer_Started(AudioFile NewTrack)
         {
+            lblTrackName.Content = $"{NewTrack.Title} - {NewTrack.Artist}";
             playPauseButton.DisplayState = PlayButtonDisplayState.Pause;
             seekBar.StartAnimation(_musicPlayer.GetCurrentTrackLength());
+            _trackProgressTimer.Start();
+            lblLength.Content = _musicPlayer.GetCurrentTrackLength().ToString(@"mm\:ss");
         }
 
         private void musicPlayer_Resumed()
@@ -145,6 +152,13 @@ namespace SharpJukebox
                 seekBar.PauseAnimation();
         }
 
+        private void musicPlayer_Stopped()
+        {
+            _trackProgressTimer.Stop();
+            lblTrackName.Content = null;
+            playPauseButton.DisplayState = PlayButtonDisplayState.Play;
+        }
+
         /////////////////////////////////
         //Player Control Event Handlers//
         /////////////////////////////////
@@ -154,6 +168,21 @@ namespace SharpJukebox
                 _musicPlayer.Pause();
             else if (_musicPlayer.PlayState == PlayState.Paused)
                 _musicPlayer.Resume();
+        }
+
+        private void nextButton_Clicked()
+        {
+            _musicPlayer.NextTrack();
+        }
+
+        private void prevButton_Clicked()
+        {
+            var x = _musicPlayer.GetCurrentTrackTimePosition();
+
+            if (_musicPlayer.GetCurrentTrackTimePosition() < TimeSpan.FromSeconds(1))
+                _musicPlayer.PreviousTrack();
+            else
+                _musicPlayer.Play();
         }
 
         private void seekBar_Seeked(double TargetPercent)

@@ -9,7 +9,6 @@
              HorizontalAlignment="Stretch"
              Minimum="0" Maximum="1"
           Height="12"
-          Margin="20 10 20 5"
           MouseUp="Grid_MouseUp">
     <!--<Grid Background="White"
           HorizontalAlignment="Stretch"
